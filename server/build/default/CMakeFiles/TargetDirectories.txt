@@ -1,0 +1,4 @@
+D:/learning_2026/demo/version_app/server/build/default/CMakeFiles/fatigue_core.dir
+D:/learning_2026/demo/version_app/server/build/default/CMakeFiles/fatigue_server.dir
+D:/learning_2026/demo/version_app/server/build/default/CMakeFiles/edit_cache.dir
+D:/learning_2026/demo/version_app/server/build/default/CMakeFiles/rebuild_cache.dir

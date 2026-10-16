@@ -1,0 +1,31 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Default (mock only, header-only deps)",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "FATIGUE_ENABLE_ONNX": "OFF"
+      }
+    },
+    {
+      "name": "onnx",
+      "displayName": "ONNX + OpenCV (requires vcpkg)",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/onnx",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "FATIGUE_ENABLE_ONNX": "ON",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "default", "configurePreset": "default" },
+    { "name": "onnx", "configurePreset": "onnx" }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.fatigueguard.app-mergeDebugResources-49:/values-v24/values-v24.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\ny\\.gradle\\caches\\transforms-4\\03a407625e14ead4da687348a5c0b20a\\transformed\\appcompat-1.1.0\\res\\values-v24\\values-v24.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,212",
+                        "endColumns": "156,134",
+                        "endOffsets": "207,342"
+                    }
+                }
+            ]
+        }
+    ]
+}

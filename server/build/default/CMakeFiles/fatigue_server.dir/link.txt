@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\fatigue_server.dir/objects.a
+D:\g++\x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1\mingw64\bin\ar.exe qc CMakeFiles\fatigue_server.dir/objects.a @CMakeFiles\fatigue_server.dir\objects1.rsp
+D:\g++\x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1\mingw64\bin\c++.exe -O3 -DNDEBUG -Wl,--whole-archive CMakeFiles\fatigue_server.dir/objects.a -Wl,--no-whole-archive -o fatigue_server.exe -Wl,--out-implib,libfatigue_server.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\fatigue_server.dir\linkLibs.rsp

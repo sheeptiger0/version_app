@@ -1,0 +1,3 @@
+D:/learning_2026/demo/version_app/server/build/default/_deps/asio-subbuild/CMakeFiles/asio-populate.dir
+D:/learning_2026/demo/version_app/server/build/default/_deps/asio-subbuild/CMakeFiles/edit_cache.dir
+D:/learning_2026/demo/version_app/server/build/default/_deps/asio-subbuild/CMakeFiles/rebuild_cache.dir
