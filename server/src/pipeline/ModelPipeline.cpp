@@ -1,4 +1,4 @@
-#include "pipeline/OnnxPipeline.h"
+#include "pipeline/ModelPipeline.h"
 
 #include <opencv2/opencv.hpp>
 
@@ -7,7 +7,14 @@
 #include <iostream>
 #include <vector>
 
+#include "inference/IInferenceBackend.h"
+
+#ifdef FATIGUE_ENABLE_ONNX
 #include "inference/OrtBackend.h"
+#endif
+#ifdef FATIGUE_ENABLE_TENSORRT
+#include "inference/TrTBackend.h"
+#endif
 
 namespace fatigue {
 
@@ -122,24 +129,47 @@ void headPose(const std::vector<cv::Point2f>& imgPts,
   }
 }
 
+// 根据 opts.backend 创建对应后端：tensorrt -> TrTBackend，否则 -> OrtBackend。
+std::unique_ptr<IInferenceBackend> makeBackend(const std::string& modelPath,
+                                               const PipelineOptions& opts) {
+  if (opts.backend == "tensorrt") {
+#ifdef FATIGUE_ENABLE_TENSORRT
+    return std::make_unique<TrTBackend>(modelPath);
+#else
+    (void)modelPath;
+    return nullptr;  // 未编译 tensorrt 后端
+#endif
+  }
+#ifdef FATIGUE_ENABLE_ONNX
+  return std::make_unique<OrtBackend>(modelPath, opts.device);
+#else
+  (void)modelPath;
+  (void)opts;
+  return nullptr;
+#endif
+}
+
 } // namespace
 
-OnnxPipeline::OnnxPipeline(const PipelineOptions& opts)
-    : t0_(std::chrono::steady_clock::now()) {
-  faceDet_ = std::make_unique<OrtBackend>(opts.modelDir + "/yolov8n-face.onnx", opts.device);
-  if (!faceDet_->ok()) {
-    std::cerr << "[onnx] face detector failed to load; backend unavailable\n";
+ModelPipeline::ModelPipeline(const PipelineOptions& opts)
+    : t0_(std::chrono::steady_clock::now()), backendName_(opts.backend) {
+  // tensorrt 加载 .engine，onnx 加载 .onnx。
+  const std::string ext = (opts.backend == "tensorrt") ? ".engine" : ".onnx";
+
+  faceDet_ = makeBackend(opts.modelDir + "/yolov8n-face" + ext, opts);
+  if (!faceDet_ || !faceDet_->ok()) {
+    std::cerr << "[" << backendName_ << "] face detector failed to load; backend unavailable\n";
     return;
   }
-  landmarkDet_ = std::make_unique<OrtBackend>(opts.modelDir + "/pfld.onnx", opts.device);
-  hasLandmark_ = landmarkDet_->ok();
+  landmarkDet_ = makeBackend(opts.modelDir + "/pfld" + ext, opts);
+  hasLandmark_ = landmarkDet_ && landmarkDet_->ok();
   if (!hasLandmark_) {
-    std::cerr << "[onnx] PFLD not found; using 5-point head-pose fallback\n";
+    std::cerr << "[" << backendName_ << "] PFLD not found; using 5-point head-pose fallback\n";
   }
   ready_ = true;
 }
 
-FaceDet detectFace(OrtBackend& det, const cv::Mat& bgr) {
+FaceDet detectFace(IInferenceBackend& det, const cv::Mat& bgr) {
   FaceDet out;
   Letterbox lb = letterbox(bgr, kDetInputSize);
 
@@ -228,7 +258,7 @@ FaceDet detectFace(OrtBackend& det, const cv::Mat& bgr) {
   return out;
 }
 
-std::vector<Point2f> detectLandmarks(OrtBackend& lmk, const cv::Mat& bgr, const FaceDet& face) {
+std::vector<Point2f> detectLandmarks(IInferenceBackend& lmk, const cv::Mat& bgr, const FaceDet& face) {
   std::vector<Point2f> result;
   // Crop the face with margin and resize to the PFLD input size.
   const int x1 = std::max(0, static_cast<int>(face.x * bgr.cols));
@@ -272,7 +302,7 @@ std::vector<Point2f> detectLandmarks(OrtBackend& lmk, const cv::Mat& bgr, const 
   return result;
 }
 
-DetectResult OnnxPipeline::process(const uint8_t* jpeg, size_t len) {
+DetectResult ModelPipeline::process(const uint8_t* jpeg, size_t len) {
   const auto now = std::chrono::steady_clock::now();
   const double t = std::chrono::duration<double>(now - t0_).count();
   ++frames_;

@@ -8,7 +8,8 @@
       "binaryDir": "${sourceDir}/build/default",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "FATIGUE_ENABLE_ONNX": "OFF"
+        "FATIGUE_ENABLE_ONNX": "OFF",
+        "FATIGUE_ENABLE_TENSORRT": "OFF"
       }
     },
     {
@@ -20,12 +21,65 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "FATIGUE_ENABLE_ONNX": "ON",
+        "FATIGUE_ENABLE_TENSORRT": "OFF",
         "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      }
+    },
+    {
+      "name": "tensorrt",
+      "displayName": "TensorRT + OpenCV (MSVC, requires CUDA + TensorRT + vcpkg)",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/tensorrt",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "FATIGUE_ENABLE_TENSORRT": "ON",
+        "FATIGUE_ENABLE_ONNX": "OFF",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      }
+    },
+    {
+      "name": "linux-default",
+      "displayName": "Linux default (mock only, header-only deps)",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/linux-default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "FATIGUE_ENABLE_ONNX": "OFF",
+        "FATIGUE_ENABLE_TENSORRT": "OFF"
+      }
+    },
+    {
+      "name": "linux-onnx",
+      "displayName": "Linux ONNX + OpenCV (requires vcpkg)",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/linux-onnx",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "FATIGUE_ENABLE_ONNX": "ON",
+        "FATIGUE_ENABLE_TENSORRT": "OFF",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      }
+    },
+    {
+      "name": "linux-tensorrt",
+      "displayName": "Linux TensorRT + OpenCV (system CUDA + TensorRT + OpenCV)",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/linux-tensorrt",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "FATIGUE_ENABLE_TENSORRT": "ON",
+        "FATIGUE_ENABLE_ONNX": "OFF"
       }
     }
   ],
   "buildPresets": [
     { "name": "default", "configurePreset": "default" },
-    { "name": "onnx", "configurePreset": "onnx" }
+    { "name": "onnx", "configurePreset": "onnx" },
+    { "name": "tensorrt", "configurePreset": "tensorrt" },
+    { "name": "linux-default", "configurePreset": "linux-default" },
+    { "name": "linux-onnx", "configurePreset": "linux-onnx" },
+    { "name": "linux-tensorrt", "configurePreset": "linux-tensorrt" }
   ]
 }

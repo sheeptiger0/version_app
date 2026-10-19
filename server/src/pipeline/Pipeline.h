@@ -25,7 +25,7 @@ class IPipeline {
 };
 
 struct PipelineOptions {
-  std::string backend  = "mock";   // "mock" | "onnx"
+  std::string backend  = "mock";   // "mock" | "onnx" | "tensorrt"
   std::string device   = "cpu";    // "cpu" | "cuda"
   std::string modelDir = "models";
 };

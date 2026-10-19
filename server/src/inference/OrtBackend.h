@@ -9,23 +9,25 @@
 
 #include <onnxruntime_cxx_api.h>
 
+#include "inference/IInferenceBackend.h"
+
 namespace fatigue {
 
-class OrtBackend {
+class OrtBackend : public IInferenceBackend {
  public:
   OrtBackend(const std::string& modelPath, const std::string& device = "cpu");
 
-  bool ok() const { return ok_; }
+  bool ok() const override { return ok_; }
 
   // Runs one float input tensor of shape `inputShape` (e.g. {1,3,H,W}) and
   // returns each output as flat float data plus its shape.
   std::vector<std::vector<float>> run(
       const std::vector<float>& input,
       const std::vector<int64_t>& inputShape,
-      std::vector<std::vector<int64_t>>& outputShapes) const;
+      std::vector<std::vector<int64_t>>& outputShapes) const override;
 
-  std::vector<int64_t> inputShape() const { return inputShape_; }
-  std::vector<std::vector<int64_t>> outputShapes() const { return outputShapes_; }
+  std::vector<int64_t> inputShape() const override { return inputShape_; }
+  std::vector<std::vector<int64_t>> outputShapes() const override { return outputShapes_; }
 
  private:
   std::unique_ptr<Ort::Env> env_;

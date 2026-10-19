@@ -5,9 +5,15 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# ONNX + OpenCV 推理后端默认关闭，保证「无模型/无 GPU」也能立刻编译跑通 mock 链路。
-# 需要真实推理时：-DFATIGUE_ENABLE_ONNX=ON（需先通过 vcpkg 安装 opencv 与 onnxruntime）。
+# ONNX / TensorRT + OpenCV 推理后端默认关闭，保证「无模型/无 GPU」也能立刻编译跑通 mock 链路。
+# 需要真实推理时：
+#   -DFATIGUE_ENABLE_ONNX=ON      —— ONNX Runtime（需 vcpkg 安装 opencv 与 onnxruntime）
+#   -DFATIGUE_ENABLE_TENSORRT=ON  —— 原生 TensorRT（需 MSVC + CUDA Toolkit + TensorRT）
 option(FATIGUE_ENABLE_ONNX "Build ONNX Runtime + OpenCV inference backend" OFF)
+option(FATIGUE_ENABLE_TENSORRT "Build native TensorRT + OpenCV inference backend" OFF)
+
+# 自定义 find 模块目录（FindTensorRT.cmake）
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 find_package(Threads REQUIRED)
 
@@ -64,18 +70,32 @@ if(WIN32)
   )
 endif()
 
-if(FATIGUE_ENABLE_ONNX)
+# 真实推理后端（ONNX 或 TensorRT 任一开启）：都需要 OpenCV 做预处理/后处理，
+# 且共用同一套 ModelPipeline（前/后处理与后端无关）。
+if(FATIGUE_ENABLE_ONNX OR FATIGUE_ENABLE_TENSORRT)
   find_package(OpenCV REQUIRED)
+
+  target_sources(fatigue_core PRIVATE src/pipeline/ModelPipeline.cpp)
+  target_include_directories(fatigue_core PUBLIC ${OpenCV_INCLUDE_DIRS})
+  target_link_libraries(fatigue_core PUBLIC ${OpenCV_LIBS})
+endif()
+
+if(FATIGUE_ENABLE_ONNX)
   find_package(onnxruntime REQUIRED)
 
-  target_sources(fatigue_core PRIVATE
-    src/inference/OrtBackend.cpp
-    src/pipeline/OnnxPipeline.cpp
-  )
+  target_sources(fatigue_core PRIVATE src/inference/OrtBackend.cpp)
   target_compile_definitions(fatigue_core PUBLIC FATIGUE_ENABLE_ONNX=1)
-  target_include_directories(fatigue_core PUBLIC ${OpenCV_INCLUDE_DIRS})
   # vcpkg exposes the shared library as onnxruntime::onnxruntime.
-  target_link_libraries(fatigue_core PUBLIC ${OpenCV_LIBS} onnxruntime::onnxruntime)
+  target_link_libraries(fatigue_core PUBLIC onnxruntime::onnxruntime)
+endif()
+
+if(FATIGUE_ENABLE_TENSORRT)
+  find_package(CUDAToolkit REQUIRED)
+  find_package(TensorRT REQUIRED)
+
+  target_sources(fatigue_core PRIVATE src/inference/TrTBackend.cpp)
+  target_compile_definitions(fatigue_core PUBLIC FATIGUE_ENABLE_TENSORRT=1)
+  target_link_libraries(fatigue_core PUBLIC CUDA::cudart TensorRT::nvinfer)
 endif()
 
 add_executable(fatigue_server src/main.cpp)

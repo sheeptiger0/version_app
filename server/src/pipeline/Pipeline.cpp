@@ -4,18 +4,19 @@
 
 #include "pipeline/MockPipeline.h"
 
-#ifdef FATIGUE_ENABLE_ONNX
-#include "pipeline/OnnxPipeline.h"
+#if defined(FATIGUE_ENABLE_ONNX) || defined(FATIGUE_ENABLE_TENSORRT)
+#include "pipeline/ModelPipeline.h"
 #endif
 
 namespace fatigue {
 
 std::unique_ptr<IPipeline> makePipeline(const PipelineOptions& opts) {
-#ifdef FATIGUE_ENABLE_ONNX
-  if (opts.backend == "onnx") {
-    auto p = std::make_unique<OnnxPipeline>(opts);
+#if defined(FATIGUE_ENABLE_ONNX) || defined(FATIGUE_ENABLE_TENSORRT)
+  if (opts.backend == "onnx" || opts.backend == "tensorrt") {
+    auto p = std::make_unique<ModelPipeline>(opts);
     if (p->ready()) return p;
-    std::cerr << "[pipeline] ONNX backend failed to initialize; falling back to mock\n";
+    std::cerr << "[pipeline] " << opts.backend
+              << " backend failed to initialize; falling back to mock\n";
     return std::make_unique<MockPipeline>();
   }
 #else

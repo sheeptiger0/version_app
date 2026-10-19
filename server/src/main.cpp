@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
     if (a == "--port" && i + 1 < argc) {
       port = static_cast<uint16_t>(std::stoi(argv[++i]));
     } else if (a == "--backend" && i + 1 < argc) {
-      opts.backend = argv[++i];                 // mock | onnx
+      opts.backend = argv[++i];                 // mock | onnx | tensorrt
     } else if (a == "--device" && i + 1 < argc) {
       opts.device = argv[++i];                  // cpu | cuda
     } else if (a == "--model-dir" && i + 1 < argc) {
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
     } else if (a == "--no-view") {
       noView = true;                            // 无桌面/服务器环境，不弹窗口
     } else if (a == "--help" || a == "-h") {
-      std::cout << "usage: fatigue_server [--port 9000] [--backend mock|onnx] "
+      std::cout << "usage: fatigue_server [--port 9000] [--backend mock|onnx|tensorrt] "
                    "[--device cpu|cuda] [--model-dir models] [--no-view]\n";
       return 0;
     }
