@@ -87,12 +87,12 @@ clean: CMakeFiles/fatigue_server.dir/clean
 CMakeFiles/fatigue_core.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_core.dir\build.make CMakeFiles/fatigue_core.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_core.dir\build.make CMakeFiles/fatigue_core.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=1,2,3,4,5,6 "Built target fatigue_core"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target fatigue_core"
 .PHONY : CMakeFiles/fatigue_core.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/fatigue_core.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start D:\learning_2026\demo\version_app\server\build\default\CMakeFiles 6
+	$(CMAKE_COMMAND) -E cmake_progress_start D:\learning_2026\demo\version_app\server\build\default\CMakeFiles 8
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/fatigue_core.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start D:\learning_2026\demo\version_app\server\build\default\CMakeFiles 0
 .PHONY : CMakeFiles/fatigue_core.dir/rule
@@ -104,7 +104,7 @@ fatigue_core: CMakeFiles/fatigue_core.dir/rule
 # codegen rule for target.
 CMakeFiles/fatigue_core.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_core.dir\build.make CMakeFiles/fatigue_core.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=1,2,3,4,5,6 "Finished codegen for target fatigue_core"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Finished codegen for target fatigue_core"
 .PHONY : CMakeFiles/fatigue_core.dir/codegen
 
 # clean rule for target.
@@ -119,12 +119,12 @@ CMakeFiles/fatigue_core.dir/clean:
 CMakeFiles/fatigue_server.dir/all: CMakeFiles/fatigue_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_server.dir\build.make CMakeFiles/fatigue_server.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_server.dir\build.make CMakeFiles/fatigue_server.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=7,8 "Built target fatigue_server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=9,10 "Built target fatigue_server"
 .PHONY : CMakeFiles/fatigue_server.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/fatigue_server.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start D:\learning_2026\demo\version_app\server\build\default\CMakeFiles 8
+	$(CMAKE_COMMAND) -E cmake_progress_start D:\learning_2026\demo\version_app\server\build\default\CMakeFiles 10
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/fatigue_server.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start D:\learning_2026\demo\version_app\server\build\default\CMakeFiles 0
 .PHONY : CMakeFiles/fatigue_server.dir/rule
@@ -136,7 +136,7 @@ fatigue_server: CMakeFiles/fatigue_server.dir/rule
 # codegen rule for target.
 CMakeFiles/fatigue_server.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_server.dir\build.make CMakeFiles/fatigue_server.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=7,8 "Finished codegen for target fatigue_server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=9,10 "Finished codegen for target fatigue_server"
 .PHONY : CMakeFiles/fatigue_server.dir/codegen
 
 # clean rule for target.

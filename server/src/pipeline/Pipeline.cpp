@@ -19,7 +19,7 @@ std::unique_ptr<IPipeline> makePipeline(const PipelineOptions& opts) {
     return std::make_unique<MockPipeline>();
   }
 #else
-  (void)opts;
+  (void)opts;      //为了避免编译器报 unused parameter 的警告，使用 (void)opts; 明确告诉编译器：“我知道它没用，我是故意的”。
 #endif
   return std::make_unique<MockPipeline>();
 }

@@ -285,6 +285,54 @@ src/pipeline/StateDecider.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_core.dir\build.make CMakeFiles/fatigue_core.dir/src/pipeline/StateDecider.cpp.s
 .PHONY : src/pipeline/StateDecider.cpp.s
 
+src/video/Jpeg.obj: src/video/Jpeg.cpp.obj
+.PHONY : src/video/Jpeg.obj
+
+# target to build an object file
+src/video/Jpeg.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_core.dir\build.make CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj
+.PHONY : src/video/Jpeg.cpp.obj
+
+src/video/Jpeg.i: src/video/Jpeg.cpp.i
+.PHONY : src/video/Jpeg.i
+
+# target to preprocess a source file
+src/video/Jpeg.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_core.dir\build.make CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.i
+.PHONY : src/video/Jpeg.cpp.i
+
+src/video/Jpeg.s: src/video/Jpeg.cpp.s
+.PHONY : src/video/Jpeg.s
+
+# target to generate assembly for a file
+src/video/Jpeg.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_core.dir\build.make CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.s
+.PHONY : src/video/Jpeg.cpp.s
+
+src/video/VideoViewer.obj: src/video/VideoViewer.cpp.obj
+.PHONY : src/video/VideoViewer.obj
+
+# target to build an object file
+src/video/VideoViewer.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_core.dir\build.make CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj
+.PHONY : src/video/VideoViewer.cpp.obj
+
+src/video/VideoViewer.i: src/video/VideoViewer.cpp.i
+.PHONY : src/video/VideoViewer.i
+
+# target to preprocess a source file
+src/video/VideoViewer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_core.dir\build.make CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.i
+.PHONY : src/video/VideoViewer.cpp.i
+
+src/video/VideoViewer.s: src/video/VideoViewer.cpp.s
+.PHONY : src/video/VideoViewer.s
+
+# target to generate assembly for a file
+src/video/VideoViewer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\fatigue_core.dir\build.make CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.s
+.PHONY : src/video/VideoViewer.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -313,6 +361,12 @@ help:
 	@echo ... src/pipeline/StateDecider.obj
 	@echo ... src/pipeline/StateDecider.i
 	@echo ... src/pipeline/StateDecider.s
+	@echo ... src/video/Jpeg.obj
+	@echo ... src/video/Jpeg.i
+	@echo ... src/video/Jpeg.s
+	@echo ... src/video/VideoViewer.obj
+	@echo ... src/video/VideoViewer.i
+	@echo ... src/video/VideoViewer.s
 .PHONY : help
 
 

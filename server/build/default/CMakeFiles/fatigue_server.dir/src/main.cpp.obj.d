@@ -1009,4 +1009,9 @@ CMakeFiles/fatigue_server.dir/src/main.cpp.obj: \
  D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w64-mingw32/16.1.0/include/c++/bits/fs_ops.h \
  D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w64-mingw32/16.1.0/include/c++/numeric \
  D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w64-mingw32/16.1.0/include/c++/bits/stl_numeric.h \
- D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w64-mingw32/16.1.0/include/c++/pstl/glue_numeric_defs.h
+ D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w64-mingw32/16.1.0/include/c++/pstl/glue_numeric_defs.h \
+ D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/conio.h \
+ D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/sec_api/conio_s.h \
+ D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/io.h \
+ D:\learning_2026\demo\version_app\server\src\video/Jpeg.h \
+ D:\learning_2026\demo\version_app\server\src\video/VideoViewer.h

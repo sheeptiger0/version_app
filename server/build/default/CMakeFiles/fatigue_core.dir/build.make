@@ -146,13 +146,45 @@ CMakeFiles/fatigue_core.dir/src/pipeline/Pipeline.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/fatigue_core.dir/src/pipeline/Pipeline.cpp.s"
 	D:\g++\x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\learning_2026\demo\version_app\server\src\pipeline\Pipeline.cpp -o CMakeFiles\fatigue_core.dir\src\pipeline\Pipeline.cpp.s
 
+CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj: CMakeFiles/fatigue_core.dir/flags.make
+CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj: CMakeFiles/fatigue_core.dir/includes_CXX.rsp
+CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj: D:/learning_2026/demo/version_app/server/src/video/Jpeg.cpp
+CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj: CMakeFiles/fatigue_core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj"
+	D:\g++\x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj -MF CMakeFiles\fatigue_core.dir\src\video\Jpeg.cpp.obj.d -o CMakeFiles\fatigue_core.dir\src\video\Jpeg.cpp.obj -c D:\learning_2026\demo\version_app\server\src\video\Jpeg.cpp
+
+CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.i"
+	D:\g++\x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\learning_2026\demo\version_app\server\src\video\Jpeg.cpp > CMakeFiles\fatigue_core.dir\src\video\Jpeg.cpp.i
+
+CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.s"
+	D:\g++\x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\learning_2026\demo\version_app\server\src\video\Jpeg.cpp -o CMakeFiles\fatigue_core.dir\src\video\Jpeg.cpp.s
+
+CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj: CMakeFiles/fatigue_core.dir/flags.make
+CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj: CMakeFiles/fatigue_core.dir/includes_CXX.rsp
+CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj: D:/learning_2026/demo/version_app/server/src/video/VideoViewer.cpp
+CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj: CMakeFiles/fatigue_core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj"
+	D:\g++\x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj -MF CMakeFiles\fatigue_core.dir\src\video\VideoViewer.cpp.obj.d -o CMakeFiles\fatigue_core.dir\src\video\VideoViewer.cpp.obj -c D:\learning_2026\demo\version_app\server\src\video\VideoViewer.cpp
+
+CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.i"
+	D:\g++\x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\learning_2026\demo\version_app\server\src\video\VideoViewer.cpp > CMakeFiles\fatigue_core.dir\src\video\VideoViewer.cpp.i
+
+CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.s"
+	D:\g++\x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\learning_2026\demo\version_app\server\src\video\VideoViewer.cpp -o CMakeFiles\fatigue_core.dir\src\video\VideoViewer.cpp.s
+
 # Object files for target fatigue_core
 fatigue_core_OBJECTS = \
 "CMakeFiles/fatigue_core.dir/src/net/UdpServer.cpp.obj" \
 "CMakeFiles/fatigue_core.dir/src/net/asio_impl.cpp.obj" \
 "CMakeFiles/fatigue_core.dir/src/pipeline/StateDecider.cpp.obj" \
 "CMakeFiles/fatigue_core.dir/src/pipeline/MockPipeline.cpp.obj" \
-"CMakeFiles/fatigue_core.dir/src/pipeline/Pipeline.cpp.obj"
+"CMakeFiles/fatigue_core.dir/src/pipeline/Pipeline.cpp.obj" \
+"CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj" \
+"CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj"
 
 # External object files for target fatigue_core
 fatigue_core_EXTERNAL_OBJECTS =
@@ -162,9 +194,11 @@ libfatigue_core.a: CMakeFiles/fatigue_core.dir/src/net/asio_impl.cpp.obj
 libfatigue_core.a: CMakeFiles/fatigue_core.dir/src/pipeline/StateDecider.cpp.obj
 libfatigue_core.a: CMakeFiles/fatigue_core.dir/src/pipeline/MockPipeline.cpp.obj
 libfatigue_core.a: CMakeFiles/fatigue_core.dir/src/pipeline/Pipeline.cpp.obj
+libfatigue_core.a: CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj
+libfatigue_core.a: CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj
 libfatigue_core.a: CMakeFiles/fatigue_core.dir/build.make
 libfatigue_core.a: CMakeFiles/fatigue_core.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX static library libfatigue_core.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=D:\learning_2026\demo\version_app\server\build\default\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX static library libfatigue_core.a"
 	$(CMAKE_COMMAND) -P CMakeFiles\fatigue_core.dir\cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\fatigue_core.dir\link.txt --verbose=$(VERBOSE)
 

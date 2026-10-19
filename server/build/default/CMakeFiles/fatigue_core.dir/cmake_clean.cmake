@@ -9,6 +9,10 @@ file(REMOVE_RECURSE
   "CMakeFiles/fatigue_core.dir/src/pipeline/Pipeline.cpp.obj.d"
   "CMakeFiles/fatigue_core.dir/src/pipeline/StateDecider.cpp.obj"
   "CMakeFiles/fatigue_core.dir/src/pipeline/StateDecider.cpp.obj.d"
+  "CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj"
+  "CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj.d"
+  "CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj"
+  "CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj.d"
   "libfatigue_core.a"
   "libfatigue_core.pdb"
 )

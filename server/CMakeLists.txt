@@ -57,7 +57,11 @@ target_link_libraries(fatigue_core PUBLIC Threads::Threads)
 
 if(WIN32)
   target_compile_definitions(fatigue_core PUBLIC _WIN32_WINNT=0x0A00)
-  target_link_libraries(fatigue_core PUBLIC ws2_32 mswsock bcrypt)
+  target_link_libraries(fatigue_core PUBLIC ws2_32 mswsock bcrypt gdi32 user32 windowscodecs ole32)
+  target_sources(fatigue_core PRIVATE
+    src/video/Jpeg.cpp
+    src/video/VideoViewer.cpp
+  )
 endif()
 
 if(FATIGUE_ENABLE_ONNX)

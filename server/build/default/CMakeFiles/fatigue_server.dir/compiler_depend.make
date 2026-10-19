@@ -364,6 +364,7 @@ CMakeFiles/fatigue_server.dir/src/main.cpp.obj: D:/learning_2026/demo/version_ap
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/basetsd.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/bemapiset.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/concurrencysal.h \
+  D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/conio.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/consoleapi.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/consoleapi2.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/consoleapi3.h \
@@ -390,6 +391,7 @@ CMakeFiles/fatigue_server.dir/src/main.cpp.obj: D:/learning_2026/demo/version_ap
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/in6addr.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/inaddr.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/interlockedapi.h \
+  D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/io.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/ioapiset.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/jobapi.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/ktmtypes.h \
@@ -432,6 +434,7 @@ CMakeFiles/fatigue_server.dir/src/main.cpp.obj: D:/learning_2026/demo/version_ap
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/reason.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/sal.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/sdkddkver.h \
+  D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/sec_api/conio_s.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/sec_api/stdio_s.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
   D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/sec_api/stralign_s.h \
@@ -885,7 +888,9 @@ CMakeFiles/fatigue_server.dir/src/main.cpp.obj: D:/learning_2026/demo/version_ap
   D:/learning_2026/demo/version_app/server/src/pipeline/Features.h \
   D:/learning_2026/demo/version_app/server/src/net/UdpServer.h \
   D:/learning_2026/demo/version_app/server/src/pipeline/Pipeline.h \
-  D:/learning_2026/demo/version_app/server/src/util/Json.h
+  D:/learning_2026/demo/version_app/server/src/util/Json.h \
+  D:/learning_2026/demo/version_app/server/src/video/Jpeg.h \
+  D:/learning_2026/demo/version_app/server/src/video/VideoViewer.h
 
 
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w64-mingw32/16.1.0/include/avx512fp16intrin.h:
@@ -1250,11 +1255,11 @@ D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w
 
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/processenv.h:
 
+_deps/asio-src/asio/include/asio/basic_socket_iostream.hpp:
+
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w64-mingw32/16.1.0/include/c++/bits/char_traits.h:
 
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/errno.h:
-
-_deps/asio-src/asio/include/asio/basic_socket_iostream.hpp:
 
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w64-mingw32/16.1.0/include/xsaveintrin.h:
 
@@ -1311,6 +1316,8 @@ D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/guiddef.h:
 
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w64-mingw32/16.1.0/include/c++/bits/stl_function.h:
+
+D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/conio.h:
 
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/lib/gcc/x86_64-w64-mingw32/16.1.0/include/c++/bits/forward_list.tcc:
 
@@ -2046,6 +2053,8 @@ D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw
 
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/inaddr.h:
 
+D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/io.h:
+
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/jobapi.h:
 
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/ktmtypes.h:
@@ -2059,6 +2068,8 @@ D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/namedpipeapi.h:
 
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/namespaceapi.h:
+
+D:/learning_2026/demo/version_app/server/src/video/VideoViewer.h:
 
 _deps/asio-src/asio/include/asio/redirect_error.hpp:
 
@@ -2097,6 +2108,8 @@ _deps/asio-src/asio/include/asio/buffered_read_stream.hpp:
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/sdkddkver.h:
 
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/winsock2.h:
+
+D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/sec_api/conio_s.h:
 
 D:/g++/x86_64-16.1.0-release-win32-seh-ucrt-rt_v14-rev1/mingw64/x86_64-w64-mingw32/include/sec_api/stralign_s.h:
 
@@ -2657,3 +2670,5 @@ _deps/asio-src/asio/include/asio/windows/overlapped_ptr.hpp:
 _deps/asio-src/asio/include/asio/write.hpp:
 
 D:/learning_2026/demo/version_app/server/src/util/Json.h:
+
+D:/learning_2026/demo/version_app/server/src/video/Jpeg.h:

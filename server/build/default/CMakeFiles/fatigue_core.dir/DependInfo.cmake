@@ -13,6 +13,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "D:/learning_2026/demo/version_app/server/src/pipeline/MockPipeline.cpp" "CMakeFiles/fatigue_core.dir/src/pipeline/MockPipeline.cpp.obj" "gcc" "CMakeFiles/fatigue_core.dir/src/pipeline/MockPipeline.cpp.obj.d"
   "D:/learning_2026/demo/version_app/server/src/pipeline/Pipeline.cpp" "CMakeFiles/fatigue_core.dir/src/pipeline/Pipeline.cpp.obj" "gcc" "CMakeFiles/fatigue_core.dir/src/pipeline/Pipeline.cpp.obj.d"
   "D:/learning_2026/demo/version_app/server/src/pipeline/StateDecider.cpp" "CMakeFiles/fatigue_core.dir/src/pipeline/StateDecider.cpp.obj" "gcc" "CMakeFiles/fatigue_core.dir/src/pipeline/StateDecider.cpp.obj.d"
+  "D:/learning_2026/demo/version_app/server/src/video/Jpeg.cpp" "CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj" "gcc" "CMakeFiles/fatigue_core.dir/src/video/Jpeg.cpp.obj.d"
+  "D:/learning_2026/demo/version_app/server/src/video/VideoViewer.cpp" "CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj" "gcc" "CMakeFiles/fatigue_core.dir/src/video/VideoViewer.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

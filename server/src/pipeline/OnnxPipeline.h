@@ -17,7 +17,7 @@ class OrtBackend;
 
 class OnnxPipeline : public IPipeline {
  public:
-  explicit OnnxPipeline(const PipelineOptions& opts);
+  explicit OnnxPipeline(const PipelineOptions& opts);             //explicit禁止隐式类型转换。
 
   bool ready() const { return ready_; }
 
