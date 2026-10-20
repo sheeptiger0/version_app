@@ -17,6 +17,7 @@ namespace fatigue {
 class TrTBackend : public IInferenceBackend {
  public:
   explicit TrTBackend(const std::string& enginePath);
+  ~TrTBackend();  // 定义在 .cpp：Impl 是不完整类型，析构器不能在头文件内联
 
   bool ok() const override;
   std::vector<std::vector<float>> run(

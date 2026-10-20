@@ -46,7 +46,9 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "FATIGUE_ENABLE_ONNX": "OFF",
-        "FATIGUE_ENABLE_TENSORRT": "OFF"
+        "FATIGUE_ENABLE_TENSORRT": "OFF",
+        "FETCHCONTENT_SOURCE_DIR_ASIO": "${sourceDir}/third_party/asio",
+        "FETCHCONTENT_SOURCE_DIR_JSON": "${sourceDir}/third_party/json"
       }
     },
     {
@@ -59,7 +61,9 @@
         "CMAKE_BUILD_TYPE": "Release",
         "FATIGUE_ENABLE_ONNX": "ON",
         "FATIGUE_ENABLE_TENSORRT": "OFF",
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "FETCHCONTENT_SOURCE_DIR_ASIO": "${sourceDir}/third_party/asio",
+        "FETCHCONTENT_SOURCE_DIR_JSON": "${sourceDir}/third_party/json"
       }
     },
     {
@@ -70,7 +74,9 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "FATIGUE_ENABLE_TENSORRT": "ON",
-        "FATIGUE_ENABLE_ONNX": "OFF"
+        "FATIGUE_ENABLE_ONNX": "OFF",
+        "FETCHCONTENT_SOURCE_DIR_ASIO": "${sourceDir}/third_party/asio",
+        "FETCHCONTENT_SOURCE_DIR_JSON": "${sourceDir}/third_party/json"
       }
     }
   ],

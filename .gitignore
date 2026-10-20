@@ -1,0 +1,25 @@
+# ============ 构建产物 ============
+build/
+cmake-build-*/
+*.o
+*.obj
+*.a
+*.lib
+*.exe
+*.out
+
+# ============ 模型权重（体积大，需自行下载/导出，见 server/models/README.md）============
+# TensorRT engine：机器/GPU 相关、不可移植，由 onnx 用 trtexec 重新生成
+*.engine
+# ONNX 模型：下载/导出方式见 server/models/README.md 与 docs/linux-build-and-run.md
+*.onnx
+
+# ============ 本地 vendor 的第三方头文件库（可重新下载，见 docs/linux-build-and-run.md）============
+third_party/
+
+# ============ 测试/抽帧保存数据 ============
+PNG/
+frames/
+
+# ============ 个人草稿 ============
+草稿

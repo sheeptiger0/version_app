@@ -56,6 +56,8 @@ struct TrTBackend::Impl {
   }
 };
 
+TrTBackend::~TrTBackend() = default;
+
 TrTBackend::TrTBackend(const std::string& enginePath)
     : impl_(std::make_unique<Impl>()) {
   // 1) 从磁盘读序列化好的 engine。
@@ -158,8 +160,8 @@ std::vector<std::vector<int64_t>> TrTBackend::outputShapes() const {
 std::vector<std::vector<float>> TrTBackend::run(
     const std::vector<float>& input,
     const std::vector<int64_t>& inputShape,
-    std::vector<std::vector<int64_t>>& outputShapes) const {
-  outputShapes.clear();
+    std::vector<std::vector<int64_t>>& outShapes) const {
+  outShapes.clear();
   (void)inputShape;  // 形状以 engine 的固定维度为准，不使用调用方传入值
   if (!impl_->ok) return {};
 
@@ -186,7 +188,7 @@ std::vector<std::vector<float>> TrTBackend::run(
                impl_->outputCounts[i] * sizeof(float), cudaMemcpyDeviceToHost);
   }
 
-  outputShapes = outputShapes();
+  outShapes = outputShapes();
   return outputs;
 }
 

@@ -23,6 +23,10 @@ void UdpServer::start(FrameCallback cb) {
 void UdpServer::stop() {
   running_ = false;
   asio::error_code ec;
+  // Linux 下 close(fd) 只会减少引用计数，并不会唤醒另一个线程里阻塞中的
+  // receive_from()。先 shutdown() 让阻塞的 recv 立即返回，再 close/join，
+  // 否则 stop() 会永久卡在 thread_.join() 上（Ctrl+C 退不出去）。
+  socket_.shutdown(asio::ip::udp::socket::shutdown_both, ec);
   socket_.close(ec);
   if (thread_.joinable()) thread_.join();
 }

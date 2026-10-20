@@ -20,6 +20,7 @@ class IInferenceBackend;
 class ModelPipeline : public IPipeline {
  public:
   explicit ModelPipeline(const PipelineOptions& opts);   //explicit禁止隐式类型转换。
+  ~ModelPipeline();  // 定义在 .cpp：IInferenceBackend 是不完整类型，析构器不能在头文件内联
 
   bool ready() const { return ready_; }
 

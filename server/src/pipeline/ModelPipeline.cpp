@@ -79,26 +79,31 @@ float iou(const FaceDet& a, const FaceDet& b) {
 // 6-point generic 3D face model (dlib-style) for solvePnP with 68 landmarks.
 // Indices into the 68-point layout: nose 30, chin 8, left-eye 36,
 // right-eye 45, left-mouth 48, right-mouth 54.
+//
+// 坐标系与 OpenCV 图像一致：X 向右、Y 向下、Z 朝相机（+Z）。
+// 原 dlib 模型是 Y 向上、Z 背离相机，直接套 solvePnP 会让正脸测出
+// pitch≈±180°（等价于模型绕 X 翻 180°），因此这里把 Y、Z 同时取反。
 const std::vector<cv::Point3d>& pose3D68() {
   static const std::vector<cv::Point3d> m = {
       {0.0, 0.0, 0.0},            // nose tip
-      {0.0, -330.0, -65.0},       // chin
-      {-225.0, 170.0, -135.0},    // left eye corner
-      {225.0, 170.0, -135.0},     // right eye corner
-      {-150.0, -150.0, -125.0},   // left mouth corner
-      {150.0, -150.0, -125.0},    // right mouth corner
+      {0.0, 330.0, 65.0},         // chin
+      {-225.0, -170.0, 135.0},    // left eye corner
+      {225.0, -170.0, 135.0},     // right eye corner
+      {-150.0, 150.0, 125.0},     // left mouth corner
+      {150.0, 150.0, 125.0},      // right mouth corner
   };
   return m;
 }
 
 // 5-point model for the YOLO-face landmark fallback (nose, eyes, mouth).
+// 同样按 OpenCV 约定（Y 下、Z 朝相机）取反 Y、Z。
 const std::vector<cv::Point3d>& pose3D5() {
   static const std::vector<cv::Point3d> m = {
       {0.0, 0.0, 0.0},
-      {-225.0, 170.0, -135.0},
-      {225.0, 170.0, -135.0},
-      {-150.0, -150.0, -125.0},
-      {150.0, -150.0, -125.0},
+      {-225.0, -170.0, 135.0},
+      {225.0, -170.0, 135.0},
+      {-150.0, 150.0, 125.0},
+      {150.0, 150.0, 125.0},
   };
   return m;
 }
@@ -118,8 +123,8 @@ void headPose(const std::vector<cv::Point2f>& imgPts,
   cv::Mat R;
   cv::Rodrigues(rvec, R);  // 3x3 double
 
-  // Decompose. NOTE: sign conventions depend on the 3D model orientation;
-  // flip yaw/pitch signs here if validation with the real model shows mirroring.
+  // 旋转矩阵分解为欧拉角（yaw/pitch/roll，单位：度）。
+  // 3D 模型已按 OpenCV 约定标定（Y 下、Z 朝相机），正脸应得 yaw≈0、pitch≈0。
   const double sy = std::sqrt(R.at<double>(0, 0) * R.at<double>(0, 0) +
                               R.at<double>(1, 0) * R.at<double>(1, 0));
   if (sy > 1e-6) {
@@ -169,6 +174,8 @@ ModelPipeline::ModelPipeline(const PipelineOptions& opts)
   ready_ = true;
 }
 
+ModelPipeline::~ModelPipeline() = default;
+
 FaceDet detectFace(IInferenceBackend& det, const cv::Mat& bgr) {
   FaceDet out;
   Letterbox lb = letterbox(bgr, kDetInputSize);
@@ -193,13 +200,15 @@ FaceDet detectFace(IInferenceBackend& det, const cv::Mat& bgr) {
   const bool transposed = (a <= 16 && b > 16);
   const int64_t num  = transposed ? b : a;
   const int64_t feat = transposed ? a : b;
-  if (feat < 15) return out;
+  // 至少需要 cx,cy,w,h,conf 五个字段；关键点（15 特征）是可选的——
+  // 68 点关键点由 PFLD 提供，检测器只需给出人脸框即可。
+  if (feat < 5) return out;
 
   const float* data = outputs[0].data();
   std::vector<FaceDet> cands;
 
   for (int64_t i = 0; i < num; ++i) {
-    float row[16];
+    float row[16] = {};
     for (int64_t j = 0; j < feat && j < 16; ++j) {
       row[j] = transposed ? data[j * num + i] : data[i * feat + j];
     }
@@ -218,9 +227,11 @@ FaceDet detectFace(IInferenceBackend& det, const cv::Mat& bgr) {
     c.y = std::clamp(y1, 0.0f, 1.0f);
     c.w = std::clamp(x2, 0.0f, 1.0f) - c.x;
     c.h = std::clamp(y2, 0.0f, 1.0f) - c.y;
-    for (int k = 0; k < 5; ++k) {
-      c.kpts[k][0] = std::clamp(row[5 + 2 * k] * s, 0.0f, 1.0f);
-      c.kpts[k][1] = std::clamp(row[5 + 2 * k + 1] * s, 0.0f, 1.0f);
+    if (feat >= 15) {  // 仅当检测器输出带 5 个关键点（15 特征）时才解析
+      for (int k = 0; k < 5; ++k) {
+        c.kpts[k][0] = std::clamp(row[5 + 2 * k] * s, 0.0f, 1.0f);
+        c.kpts[k][1] = std::clamp(row[5 + 2 * k + 1] * s, 0.0f, 1.0f);
+      }
     }
     cands.push_back(c);
   }

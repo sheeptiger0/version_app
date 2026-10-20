@@ -98,5 +98,38 @@ if(FATIGUE_ENABLE_TENSORRT)
   target_link_libraries(fatigue_core PUBLIC CUDA::cudart TensorRT::nvinfer)
 endif()
 
+# 实时预览 viewer（Linux/桌面环境，可选）：OpenCV 解码 JPEG + imshow。
+# 独立于推理后端——mock 模式下也能用。自动探测：装了 OpenCV 就编译，
+# 没装则退回 headless，不破坏「mock 只需 cmake + g++」的零依赖默认。
+if(NOT FATIGUE_ENABLE_ONNX AND NOT FATIGUE_ENABLE_TENSORRT)
+  find_package(OpenCV QUIET COMPONENTS core imgcodecs highgui)
+  if(NOT OpenCV_FOUND)
+    # 兜底：Ubuntu 单独装 libopencv-core-dev/imgcodecs-dev/highgui-dev 时没有
+    # libopencv-dev 元包，也就没有 OpenCVConfig.cmake。此时头文件在
+    # /usr/include/opencv4、库在标准链接路径，直接手写探测。
+    find_path(OPENCV4_INCLUDE_DIR opencv2/core.hpp
+              PATHS /usr/include/opencv4 /usr/local/include/opencv4)
+    find_library(OPENCV4_CORE_LIB      opencv_core)
+    find_library(OPENCV4_IMGCODECS_LIB opencv_imgcodecs)
+    find_library(OPENCV4_HIGHGUI_LIB   opencv_highgui)
+    if(OPENCV4_INCLUDE_DIR AND OPENCV4_CORE_LIB AND
+       OPENCV4_IMGCODECS_LIB AND OPENCV4_HIGHGUI_LIB)
+      set(OpenCV_FOUND TRUE)
+      set(OpenCV_INCLUDE_DIRS ${OPENCV4_INCLUDE_DIR})
+      set(OpenCV_LIBS ${OPENCV4_CORE_LIB} ${OPENCV4_IMGCODECS_LIB} ${OPENCV4_HIGHGUI_LIB})
+    endif()
+  endif()
+
+  if(OpenCV_FOUND)
+    message(STATUS "OpenCV found — enabling live preview viewer")
+    target_sources(fatigue_core PRIVATE src/video/OpenCvViewer.cpp)
+    target_compile_definitions(fatigue_core PUBLIC FATIGUE_ENABLE_VIEWER=1)
+    target_include_directories(fatigue_core PUBLIC ${OpenCV_INCLUDE_DIRS})
+    target_link_libraries(fatigue_core PUBLIC ${OpenCV_LIBS})
+  else()
+    message(STATUS "OpenCV not found — building headless (no live preview)")
+  endif()
+endif()
+
 add_executable(fatigue_server src/main.cpp)
 target_link_libraries(fatigue_server PRIVATE fatigue_core)
