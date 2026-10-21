@@ -1,9 +1,9 @@
-#include "pipeline/MockPipeline.h"
+#include "pipeline/mock/MockPipeline.h"
 
 #include <algorithm>
 #include <cmath>
 
-namespace fatigue {
+namespace DMSAlgo {
 
 MockPipeline::MockPipeline() : t0_(std::chrono::steady_clock::now()) {}
 
@@ -41,4 +41,4 @@ DetectResult MockPipeline::process(const uint8_t* /*jpeg*/, size_t /*len*/) {
   return r;
 }
 
-} // namespace fatigue
+} // namespace DMSAlgo

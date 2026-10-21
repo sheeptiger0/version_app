@@ -3,7 +3,7 @@
 #include <opencv2/highgui.hpp>    // imshow / waitKey / destroyAllWindows
 #include <opencv2/imgcodecs.hpp>  // imdecode
 
-namespace fatigue {
+namespace DMSAlgo {
 
 bool OpenCvViewer::start(const std::string& title) {
   title_ = title;
@@ -41,4 +41,4 @@ void OpenCvViewer::stop() {
   hasFrame_ = false;
 }
 
-} // namespace fatigue
+} // namespace DMSAlgo

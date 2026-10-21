@@ -1,6 +1,6 @@
 #include "net/UdpServer.h"
 
-namespace fatigue {
+namespace DMSAlgo {
 
 using asio::ip::udp;
 
@@ -74,4 +74,4 @@ udp::endpoint UdpServer::lastClient() const {
   return lastClient_;
 }
 
-} // namespace fatigue
+} // namespace DMSAlgo

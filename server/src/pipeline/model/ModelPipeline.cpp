@@ -1,22 +1,15 @@
-#include "pipeline/ModelPipeline.h"
+#include "pipeline/model/ModelPipeline.h"
 
 #include <opencv2/opencv.hpp>
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 #include <vector>
 
 #include "inference/IInferenceBackend.h"
+#include "util/Log.h"
 
-#ifdef FATIGUE_ENABLE_ONNX
-#include "inference/OrtBackend.h"
-#endif
-#ifdef FATIGUE_ENABLE_TENSORRT
-#include "inference/TrTBackend.h"
-#endif
-
-namespace fatigue {
+namespace DMSAlgo {
 
 namespace {
 
@@ -133,48 +126,6 @@ void headPose(const std::vector<cv::Point2f>& imgPts,
     roll  = static_cast<float>(std::atan2(R.at<double>(1, 0), R.at<double>(0, 0)) * 180.0 / CV_PI);
   }
 }
-
-// 根据 opts.backend 创建对应后端：tensorrt -> TrTBackend，否则 -> OrtBackend。
-std::unique_ptr<IInferenceBackend> makeBackend(const std::string& modelPath,
-                                               const PipelineOptions& opts) {
-  if (opts.backend == "tensorrt") {
-#ifdef FATIGUE_ENABLE_TENSORRT
-    return std::make_unique<TrTBackend>(modelPath);
-#else
-    (void)modelPath;
-    return nullptr;  // 未编译 tensorrt 后端
-#endif
-  }
-#ifdef FATIGUE_ENABLE_ONNX
-  return std::make_unique<OrtBackend>(modelPath, opts.device);
-#else
-  (void)modelPath;
-  (void)opts;
-  return nullptr;
-#endif
-}
-
-} // namespace
-
-ModelPipeline::ModelPipeline(const PipelineOptions& opts)
-    : t0_(std::chrono::steady_clock::now()), backendName_(opts.backend) {
-  // tensorrt 加载 .engine，onnx 加载 .onnx。
-  const std::string ext = (opts.backend == "tensorrt") ? ".engine" : ".onnx";
-
-  faceDet_ = makeBackend(opts.modelDir + "/yolov8n-face" + ext, opts);
-  if (!faceDet_ || !faceDet_->ok()) {
-    std::cerr << "[" << backendName_ << "] face detector failed to load; backend unavailable\n";
-    return;
-  }
-  landmarkDet_ = makeBackend(opts.modelDir + "/pfld" + ext, opts);
-  hasLandmark_ = landmarkDet_ && landmarkDet_->ok();
-  if (!hasLandmark_) {
-    std::cerr << "[" << backendName_ << "] PFLD not found; using 5-point head-pose fallback\n";
-  }
-  ready_ = true;
-}
-
-ModelPipeline::~ModelPipeline() = default;
 
 FaceDet detectFace(IInferenceBackend& det, const cv::Mat& bgr) {
   FaceDet out;
@@ -313,6 +264,28 @@ std::vector<Point2f> detectLandmarks(IInferenceBackend& lmk, const cv::Mat& bgr,
   return result;
 }
 
+} // namespace
+
+ModelPipeline::ModelPipeline(const PipelineOptions& opts)
+    : device_(opts.device), backendName_(opts.backend), t0_(std::chrono::steady_clock::now()) {}
+
+ModelPipeline::~ModelPipeline() = default;
+
+bool ModelPipeline::initialize(const std::string& modelDir, const std::string& ext) {
+  faceDet_ = createBackend(modelDir + "/yolov8n-face" + ext);
+  if (!faceDet_ || !faceDet_->ok()) {
+    LOG_ERROR(backendName_) << "face detector failed to load; backend unavailable";
+    return false;
+  }
+  landmarkDet_ = createBackend(modelDir + "/pfld" + ext);
+  hasLandmark_ = landmarkDet_ && landmarkDet_->ok();
+  if (!hasLandmark_) {
+    LOG_WARN(backendName_) << "PFLD not found; using 5-point head-pose fallback";
+  }
+  ready_ = true;
+  return true;
+}
+
 DetectResult ModelPipeline::process(const uint8_t* jpeg, size_t len) {
   const auto now = std::chrono::steady_clock::now();
   const double t = std::chrono::duration<double>(now - t0_).count();
@@ -368,7 +341,12 @@ DetectResult ModelPipeline::process(const uint8_t* jpeg, size_t len) {
 
   r.state = decider_.update(f);
   r.features = f;
+
+  const double ms = std::chrono::duration<double, std::milli>(
+      std::chrono::steady_clock::now() - now).count();
+  LOG_DEBUG(backendName_) << "frame " << frameId_ << " in " << ms << " ms";
+
   return r;
 }
 
-} // namespace fatigue
+} // namespace DMSAlgo

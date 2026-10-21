@@ -15,7 +15,7 @@
 #include "net/Protocol.h"
 
 using asio::ip::udp;
-using namespace fatigue;
+using namespace DMSAlgo;
 
 static std::vector<std::vector<uint8_t>> fragment(const std::vector<uint8_t>& payload,
                                                   uint32_t frameId) {

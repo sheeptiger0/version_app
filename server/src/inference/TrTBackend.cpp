@@ -1,13 +1,14 @@
 #include "inference/TrTBackend.h"
 
-#include <NvInfer.h>
-#include <cuda_runtime_api.h>
+#include <NvInfer.h>                     // TensorRT
+#include <cuda_runtime_api.h>            // CUDA Runtime
 
 #include <fstream>
-#include <iostream>
 #include <vector>
 
-namespace fatigue {
+#include "util/Log.h"
+
+namespace DMSAlgo {
 
 namespace {
 
@@ -15,7 +16,12 @@ namespace {
 class TrTLogger : public nvinfer1::ILogger {
  public:
   void log(Severity severity, const char* msg) noexcept override {
-    if (severity <= Severity::kWARNING) std::cerr << "[trt] " << msg << "\n";
+    if (severity <= Severity::kERROR) {
+      LOG_ERROR("trt") << msg;
+    } else if (severity == Severity::kWARNING) {
+      LOG_WARN("trt") << msg;
+    }
+    // kINFO / kVERBOSE 忽略，避免刷屏。
   }
 };
 
@@ -63,14 +69,14 @@ TrTBackend::TrTBackend(const std::string& enginePath)
   // 1) 从磁盘读序列化好的 engine。
   std::ifstream f(enginePath, std::ios::binary | std::ios::ate);
   if (!f) {
-    std::cerr << "[trt] cannot open engine '" << enginePath << "'\n";
+    LOG_ERROR("trt") << "cannot open engine '" << enginePath << "'";
     return;
   }
   const std::streamsize size = f.tellg();
   f.seekg(0, std::ios::beg);
   std::vector<char> blob(static_cast<size_t>(size));
   if (!f.read(blob.data(), size)) {
-    std::cerr << "[trt] failed to read engine '" << enginePath << "'\n";
+    LOG_ERROR("trt") << "failed to read engine '" << enginePath << "'";
     return;
   }
 
@@ -78,17 +84,17 @@ TrTBackend::TrTBackend(const std::string& enginePath)
   TrTLogger logger;
   impl_->runtime = nvinfer1::createInferRuntime(logger);
   if (!impl_->runtime) {
-    std::cerr << "[trt] createInferRuntime failed\n";
+    LOG_ERROR("trt") << "createInferRuntime failed";
     return;
   }
   impl_->engine = impl_->runtime->deserializeCudaEngine(blob.data(), blob.size());
   if (!impl_->engine) {
-    std::cerr << "[trt] deserializeCudaEngine failed for '" << enginePath << "'\n";
+    LOG_ERROR("trt") << "deserializeCudaEngine failed for '" << enginePath << "'";
     return;
   }
   impl_->ctx = impl_->engine->createExecutionContext();
   if (!impl_->ctx) {
-    std::cerr << "[trt] createExecutionContext failed\n";
+    LOG_ERROR("trt") << "createExecutionContext failed";
     return;
   }
 
@@ -108,26 +114,26 @@ TrTBackend::TrTBackend(const std::string& enginePath)
     }
   }
   if (impl_->inputName.empty() || impl_->outputNames.empty()) {
-    std::cerr << "[trt] engine has no input/output tensors\n";
+    LOG_ERROR("trt") << "engine has no input/output tensors";
     return;
   }
 
   // 4) 分配显存并把张量地址绑定到 context。
   const size_t inBytes = static_cast<size_t>(dimsVolume(impl_->inputDims)) * sizeof(float);
   if (cudaMalloc(&impl_->dInput, inBytes) != cudaSuccess) {
-    std::cerr << "[trt] cudaMalloc(input) failed\n";
+    LOG_ERROR("trt") << "cudaMalloc(input) failed";
     return;
   }
   for (size_t i = 0; i < impl_->outputNames.size(); ++i) {
     void* p = nullptr;
     if (cudaMalloc(&p, impl_->outputCounts[i] * sizeof(float)) != cudaSuccess) {
-      std::cerr << "[trt] cudaMalloc(output) failed\n";
+      LOG_ERROR("trt") << "cudaMalloc(output) failed";
       return;
     }
     impl_->dOutputs.push_back(p);
   }
   if (cudaStreamCreate(&impl_->stream) != cudaSuccess) {
-    std::cerr << "[trt] cudaStreamCreate failed\n";
+    LOG_ERROR("trt") << "cudaStreamCreate failed";
     return;
   }
 
@@ -167,8 +173,8 @@ std::vector<std::vector<float>> TrTBackend::run(
 
   const size_t inCount = static_cast<size_t>(dimsVolume(impl_->inputDims));
   if (input.size() != inCount) {
-    std::cerr << "[trt] input size mismatch: got " << input.size()
-              << ", expected " << inCount << "\n";
+    LOG_ERROR("trt") << "input size mismatch: got " << input.size()
+              << ", expected " << inCount;
     return {};
   }
 
@@ -176,7 +182,7 @@ std::vector<std::vector<float>> TrTBackend::run(
   cudaMemcpy(impl_->dInput, input.data(), inCount * sizeof(float),
              cudaMemcpyHostToDevice);
   if (!impl_->ctx->enqueueV3(impl_->stream)) {
-    std::cerr << "[trt] enqueueV3 failed\n";
+    LOG_ERROR("trt") << "enqueueV3 failed";
     return {};
   }
   cudaStreamSynchronize(impl_->stream);
@@ -192,4 +198,4 @@ std::vector<std::vector<float>> TrTBackend::run(
   return outputs;
 }
 
-} // namespace fatigue
+} // namespace DMSAlgo

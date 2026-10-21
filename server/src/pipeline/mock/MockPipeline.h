@@ -3,10 +3,10 @@
 #include <chrono>
 #include <cstdint>
 
-#include "pipeline/Pipeline.h"
-#include "pipeline/StateDecider.h"
+#include "pipeline/base/Pipeline.h"
+#include "pipeline/base/StateDecider.h"
 
-namespace fatigue {
+namespace DMSAlgo {
 
 // Model-free backend used to exercise the whole network -> pipeline -> decision
 // -> reply loop. Synthesizes a drifting face whose EAR/yaw periodically cross
@@ -26,4 +26,4 @@ class MockPipeline : public IPipeline {
   size_t frames_ = 0;
 };
 
-} // namespace fatigue
+} // namespace DMSAlgo

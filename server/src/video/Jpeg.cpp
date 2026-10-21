@@ -4,7 +4,7 @@
 #include <objbase.h>
 #include <wincodec.h>
 
-namespace fatigue {
+namespace DMSAlgo {
 
 namespace {
 
@@ -76,4 +76,4 @@ bool decodeJpegToBgra(const uint8_t* jpeg, size_t len, int& outW, int& outH,
   return true;
 }
 
-} // namespace fatigue
+} // namespace DMSAlgo

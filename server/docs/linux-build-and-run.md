@@ -206,7 +206,7 @@ sudo apt install -y cuda-toolkit-13-4 tensorrt-dev libnvinfer-bin \
 
 - `yolov8n-face.onnx`：deepghs/yolo-face 的**纯检测版**（输出 `[batch,5,8400]` = 框+置信度，无关键点），走 HuggingFace 国内镜像 `hf-mirror.com`。
 - `pfld.onnx`：elliottzheng/fast-alignment 的 `PFLD.onnx`（输入 112×112，输出 136 = 68 点）。
-- 68 点关键点交给 PFLD，检测器只需给人脸框，故把 [ModelPipeline.cpp](src/pipeline/ModelPipeline.cpp) 的 `feat < 15` 放宽为 `feat < 5`（关键点解析加 `feat >= 15` 保护）。
+- 68 点关键点交给 PFLD，检测器只需给人脸框，故把 [ModelPipeline.cpp](src/pipeline/model/ModelPipeline.cpp) 的 `feat < 15` 放宽为 `feat < 5`（关键点解析加 `feat >= 15` 保护）。
 
 ### 转 engine（shape 必须钉死）
 
@@ -226,7 +226,7 @@ sudo apt install -y cuda-toolkit-13-4 tensorrt-dev libnvinfer-bin \
 
 **原因**：TensorRT 后端此前从未真正编译过，暴露两个 bug——
 1. [TrTBackend.cpp](src/inference/TrTBackend.cpp) `run()` 形参 `outputShapes` 与成员函数 `outputShapes()` 同名遮蔽，`outputShapes = outputShapes();` 非法；形参改名 `outShapes` 解决。
-2. pimpl/不完整类型：[TrTBackend.h](src/inference/TrTBackend.h) 的 `unique_ptr<Impl>` 与 [ModelPipeline.h](src/pipeline/ModelPipeline.h) 的 `unique_ptr<IInferenceBackend>` 须把析构器声明在头文件、定义在 .cpp，否则隐式内联析构器让引用方编译失败。
+2. pimpl/不完整类型：[TrTBackend.h](src/inference/TrTBackend.h) 的 `unique_ptr<Impl>` 与 [ModelPipeline.h](src/pipeline/model/ModelPipeline.h) 的 `unique_ptr<IInferenceBackend>` 须把析构器声明在头文件、定义在 .cpp，否则隐式内联析构器让引用方编译失败。
 
 **解决**：两处析构器移出到 .cpp（`= default`）。
 
@@ -244,7 +244,7 @@ sudo apt install -y cuda-toolkit-13-4 tensorrt-dev libnvinfer-bin \
 
 **解决**：
 1. 用正确的二进制：`./build/linux-tensorrt/fatigue_server --backend tensorrt --device cuda ...`。
-2. [Pipeline.cpp](src/pipeline/Pipeline.cpp) 已加明确诊断：跑错二进制 / 请求未编译的后端 / engine 真正加载失败，三种情况都会打印原因（`[pipeline] this binary was built without ...` / `... failed to initialize`），不再静默回退。
+2. [Pipeline.cpp](src/pipeline/base/Pipeline.cpp) 已加明确诊断：跑错二进制 / 请求未编译的后端 / engine 真正加载失败，三种情况都会打印原因（`[pipeline] this binary was built without ...` / `... failed to initialize`），不再静默回退。
 
 > 默认 `--model-dir` 已改为「相对可执行文件位置」解析（[main.cpp](src/main.cpp) 的 `defaultModelDir()`），从 `server/` 或 `build/<preset>/` 启动都能找到 `server/models`；显式传 `--model-dir` 时仍按原样（相对 CWD）解析。`--save-dir` 落盘前也会转成绝对路径，日志里打印的是真实位置。
 
@@ -252,7 +252,7 @@ sudo apt install -y cuda-toolkit-13-4 tensorrt-dev libnvinfer-bin \
 
 **现象**：模型跑通后，只要画面里有脸就一直报 `distracted`；实测正脸 `pitch≈-177°`（应为 0）。
 
-**原因**：[ModelPipeline.cpp](src/pipeline/ModelPipeline.cpp) 里 `pose3D68`/`pose3D5` 沿用 dlib 的 3D 模型朝向——**Y 向上、Z 背离相机**，而 OpenCV 图像/solvePnP 约定是 **Y 向下、Z 朝相机**。两者相反，等价于模型绕 X 轴翻 180°，于是正脸的旋转矩阵 `R[1][1]≈-1、R[2][2]≈-1`，`pitch=atan2(R[2][1],R[2][2])≈±180°`；[StateDecider](src/pipeline/StateDecider.cpp) 里 `|pitch|>20°` 一票判「分心」。
+**原因**：[ModelPipeline.cpp](src/pipeline/model/ModelPipeline.cpp) 里 `pose3D68`/`pose3D5` 沿用 dlib 的 3D 模型朝向——**Y 向上、Z 背离相机**，而 OpenCV 图像/solvePnP 约定是 **Y 向下、Z 朝相机**。两者相反，等价于模型绕 X 轴翻 180°，于是正脸的旋转矩阵 `R[1][1]≈-1、R[2][2]≈-1`，`pitch=atan2(R[2][1],R[2][2])≈±180°`；[StateDecider](src/pipeline/base/StateDecider.cpp) 里 `|pitch|>20°` 一票判「分心」。
 
 **解决**：把两个模型的 **Y、Z 同时取反**（X 不变），对齐 OpenCV 约定。修正后正脸 `pitch≈0`、`roll≈0`，`yaw` 反映真实转头角度。
 

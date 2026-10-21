@@ -42,9 +42,9 @@ endif()
 add_library(fatigue_core
   src/net/UdpServer.cpp
   src/net/asio_impl.cpp
-  src/pipeline/StateDecider.cpp
-  src/pipeline/MockPipeline.cpp
-  src/pipeline/Pipeline.cpp
+  src/pipeline/base/StateDecider.cpp
+  src/pipeline/mock/MockPipeline.cpp
+  src/pipeline/base/Pipeline.cpp
 )
 
 target_include_directories(fatigue_core PUBLIC
@@ -70,12 +70,13 @@ if(WIN32)
   )
 endif()
 
-# 真实推理后端（ONNX 或 TensorRT 任一开启）：都需要 OpenCV 做预处理/后处理，
-# 且共用同一套 ModelPipeline（前/后处理与后端无关）。
+# 真实推理后端（ONNX 或 TensorRT 任一开启）：都需要 OpenCV 做预处理/后处理。
+# 前/后处理与后端无关，集中在 ModelPipeline 基类；OnnxPipeline / TrTPipeline
+# 子类只负责创建各自的后端，各占一个文件。
 if(FATIGUE_ENABLE_ONNX OR FATIGUE_ENABLE_TENSORRT)
   find_package(OpenCV REQUIRED)
 
-  target_sources(fatigue_core PRIVATE src/pipeline/ModelPipeline.cpp)
+  target_sources(fatigue_core PRIVATE src/pipeline/model/ModelPipeline.cpp)
   target_include_directories(fatigue_core PUBLIC ${OpenCV_INCLUDE_DIRS})
   target_link_libraries(fatigue_core PUBLIC ${OpenCV_LIBS})
 endif()
@@ -83,7 +84,10 @@ endif()
 if(FATIGUE_ENABLE_ONNX)
   find_package(onnxruntime REQUIRED)
 
-  target_sources(fatigue_core PRIVATE src/inference/OrtBackend.cpp)
+  target_sources(fatigue_core PRIVATE
+    src/inference/OrtBackend.cpp
+    src/pipeline/onnx/OnnxPipeline.cpp
+  )
   target_compile_definitions(fatigue_core PUBLIC FATIGUE_ENABLE_ONNX=1)
   # vcpkg exposes the shared library as onnxruntime::onnxruntime.
   target_link_libraries(fatigue_core PUBLIC onnxruntime::onnxruntime)
@@ -93,7 +97,10 @@ if(FATIGUE_ENABLE_TENSORRT)
   find_package(CUDAToolkit REQUIRED)
   find_package(TensorRT REQUIRED)
 
-  target_sources(fatigue_core PRIVATE src/inference/TrTBackend.cpp)
+  target_sources(fatigue_core PRIVATE
+    src/inference/TrTBackend.cpp
+    src/pipeline/trt/TrTPipeline.cpp
+  )
   target_compile_definitions(fatigue_core PUBLIC FATIGUE_ENABLE_TENSORRT=1)
   target_link_libraries(fatigue_core PUBLIC CUDA::cudart TensorRT::nvinfer)
 endif()

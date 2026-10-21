@@ -9,7 +9,7 @@
 
 #include "net/Protocol.h"
 
-namespace fatigue {
+namespace DMSAlgo {
 
 // Reassembles fragmented video frames keyed by frame_id.
 // Handles out-of-order and duplicate fragments idempotently, and drops stale
@@ -80,4 +80,4 @@ class FrameReassembler {
   std::map<uint32_t, Slot> slots_;
 };
 
-} // namespace fatigue
+} // namespace DMSAlgo

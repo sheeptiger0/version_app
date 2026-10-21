@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace fatigue {
+namespace DMSAlgo {
 
 class IInferenceBackend {
  public:
@@ -26,4 +26,4 @@ class IInferenceBackend {
   virtual std::vector<std::vector<int64_t>> outputShapes() const = 0;
 };
 
-} // namespace fatigue
+} // namespace DMSAlgo

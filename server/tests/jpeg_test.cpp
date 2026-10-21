@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
 
   int w = 0, h = 0;
   std::vector<uint8_t> bgra;
-  if (!fatigue::decodeJpegToBgra(data.data(), data.size(), w, h, bgra)) {
+  if (!DMSAlgo::decodeJpegToBgra(data.data(), data.size(), w, h, bgra)) {
     std::fprintf(stderr, "DECODE FAILED\n");
     return 1;
   }

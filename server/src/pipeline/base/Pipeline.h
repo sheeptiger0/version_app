@@ -4,9 +4,9 @@
 #include <memory>
 #include <string>
 
-#include "pipeline/Features.h"
+#include "pipeline/base/Features.h"
 
-namespace fatigue {
+namespace DMSAlgo {
 
 struct DetectResult {
   std::string state = "awake";
@@ -32,4 +32,4 @@ struct PipelineOptions {
 
 std::unique_ptr<IPipeline> makePipeline(const PipelineOptions& opts);
 
-} // namespace fatigue
+} // namespace DMSAlgo

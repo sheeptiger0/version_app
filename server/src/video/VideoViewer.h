@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-namespace fatigue {
+namespace DMSAlgo {
 
 // Minimal Windows-only live video window (GDI). Frames are supplied as
 // tightly-packed, top-down 32bpp BGRA (see video/Jpeg.h). WM_KEYDOWN virtual-key
@@ -33,4 +33,4 @@ class VideoViewer {
   std::unique_ptr<Impl> impl_;
 };
 
-} // namespace fatigue
+} // namespace DMSAlgo

@@ -16,7 +16,7 @@
 #include <thread>
 #include <vector>
 
-namespace fatigue {
+namespace DMSAlgo {
 
 // 隐藏实现（PIMPL）：把 Win32 的 HWND 等细节藏在这里，头文件不暴露 windows.h
 struct VideoViewer::Impl {
@@ -227,4 +227,4 @@ void VideoViewer::stop() {
 
 bool VideoViewer::started() const { return impl_->ready.load(); }
 
-} // namespace fatigue
+} // namespace DMSAlgo

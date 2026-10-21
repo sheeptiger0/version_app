@@ -1,8 +1,10 @@
-#include "pipeline/StateDecider.h"
+#include "pipeline/base/StateDecider.h"
 
 #include <cmath>
 
-namespace fatigue {
+#include "util/Log.h"
+
+namespace DMSAlgo {
 
 StateDecider::StateDecider(const StateConfig& cfg) : cfg_(cfg) {}
 
@@ -46,10 +48,12 @@ std::string StateDecider::update(const FaceFeatures& f) {
     pending_ = raw;
     pendingCount_ = 1;
   } else if (pending_ != state_ && ++pendingCount_ >= cfg_.persistFrames) {
+    LOG_INFO("state") << state_ << " -> " << pending_
+                      << " (ear=" << f.ear << " yaw=" << f.yaw << ")";
     state_ = pending_;
   }
 
   return state_;
 }
 
-} // namespace fatigue
+} // namespace DMSAlgo

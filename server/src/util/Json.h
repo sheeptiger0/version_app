@@ -2,6 +2,6 @@
 
 #include <nlohmann/json.hpp>
 
-namespace fatigue {
+namespace DMSAlgo {
 using json = nlohmann::json;
 }

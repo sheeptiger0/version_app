@@ -11,7 +11,7 @@
 
 #include "inference/IInferenceBackend.h"
 
-namespace fatigue {
+namespace DMSAlgo {
 
 class OrtBackend : public IInferenceBackend {
  public:
@@ -40,4 +40,4 @@ class OrtBackend : public IInferenceBackend {
   bool ok_ = false;
 };
 
-} // namespace fatigue
+} // namespace DMSAlgo

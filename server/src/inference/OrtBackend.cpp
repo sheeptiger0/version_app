@@ -1,8 +1,8 @@
 #include "inference/OrtBackend.h"
 
-#include <iostream>
+#include "util/Log.h"
 
-namespace fatigue {
+namespace DMSAlgo {
 
 OrtBackend::OrtBackend(const std::string& modelPath, const std::string& device) {
   try {
@@ -15,9 +15,9 @@ OrtBackend::OrtBackend(const std::string& modelPath, const std::string& device) 
       // Best effort: if the CUDA provider isn't available, keep CPU.
       try {
         Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_CUDA(*opts_, 0));
-        std::cout << "[ort] using CUDA provider\n";
+        LOG_INFO("ort") << "using CUDA provider";
       } catch (const std::exception& e) {
-        std::cerr << "[ort] CUDA provider unavailable (" << e.what() << "), using CPU\n";
+        LOG_WARN("ort") << "CUDA provider unavailable (" << e.what() << "), using CPU";
       }
     }
 
@@ -46,7 +46,7 @@ OrtBackend::OrtBackend(const std::string& modelPath, const std::string& device) 
 
     ok_ = true;
   } catch (const std::exception& e) {
-    std::cerr << "[ort] failed to load '" << modelPath << "': " << e.what() << "\n";
+    LOG_ERROR("ort") << "failed to load '" << modelPath << "': " << e.what();
     ok_ = false;
   }
 }
@@ -87,4 +87,4 @@ std::vector<std::vector<float>> OrtBackend::run(
   return outputs;
 }
 
-} // namespace fatigue
+} // namespace DMSAlgo

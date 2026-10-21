@@ -4,9 +4,9 @@
 #include <deque>
 #include <string>
 
-#include "pipeline/Features.h"
+#include "pipeline/base/Features.h"
 
-namespace fatigue {
+namespace DMSAlgo {
 
 struct StateConfig {
   float  earThreshold   = 0.20f; // below this an eye counts as "closed"
@@ -15,7 +15,7 @@ struct StateConfig {
   float  yawThreshold   = 25.0f; // degrees
   float  pitchThreshold = 20.0f; // degrees
   size_t windowFrames   = 30;    // ~2 s at 15 fps
-  size_t persistFrames  = 15;    // ~1 s of persistence to avoid flicker
+  size_t persistFrames  = 10;    // ~1 s of persistence to avoid flicker
 };
 
 // Sliding-window temporal filter + fatigue/distraction decision.
@@ -36,4 +36,4 @@ class StateDecider {
   size_t pendingCount_ = 0;
 };
 
-} // namespace fatigue
+} // namespace DMSAlgo

@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-namespace fatigue {
+namespace DMSAlgo {
 
 constexpr uint16_t kMagic = 0xFACE;
 
@@ -94,4 +94,4 @@ inline std::vector<uint8_t> packMessage(MsgType type, uint32_t frameId,
                      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 }
 
-} // namespace fatigue
+} // namespace DMSAlgo

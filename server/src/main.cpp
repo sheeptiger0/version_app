@@ -24,8 +24,9 @@
 #include <sstream>                                     // 抽帧保存：拼文件名
 
 #include "net/UdpServer.h"                             // UDP 收发包 + 分片重组
-#include "pipeline/Pipeline.h"                         // 可插拔推理管线接口 + 工厂
+#include "pipeline/base/Pipeline.h"                         // 可插拔推理管线接口 + 工厂
 #include "util/Json.h"                                 // nlohmann/json 别名
+#include "util/Log.h"                                  // 统一日志
 
 #ifdef _WIN32                       //条件编译
 #include <conio.h>                  //Windows 特有的控制台输入输出头文件
@@ -48,6 +49,12 @@ std::condition_variable g_cv;                  //条件变量，用于线程间�
 
 // 抽帧保存：环形缓冲区容量——保留最近这么多张，满了从 0 号覆盖。
 constexpr int kMaxSavedFrames = 200;
+
+// steady_clock 毫秒时间戳，用于「无帧心跳」判断。
+int64_t steadyNowMs() {
+  return std::chrono::duration_cast<std::chrono::milliseconds>(
+             std::chrono::steady_clock::now().time_since_epoch()).count();
+}
 
 // 默认模型目录：相对可执行文件所在的项目根（server/）解析，而不是相对 CWD，
 // 这样无论从 server/ 还是 build/<preset>/ 启动，都能找到 server/models。
@@ -107,7 +114,7 @@ int main(int argc, char** argv) {
   bool noView = false;                          // 是否不弹视频窗口（无桌面环境用）
   std::string saveDir;                          // 抽帧保存目录（空 = 不保存）
   int saveInterval = 5;                         // 抽帧保存间隔：每 N 帧存一张
-  fatigue::PipelineOptions opts;                // 管线选项（backend / device / modelDir）
+  DMSAlgo::PipelineOptions opts;                // 管线选项（backend / device / modelDir）
   opts.modelDir = defaultModelDir();            // 默认模型目录相对可执行文件定位（而非 CWD）
 
   // ---- 2. 解析命令行参数 ----
@@ -128,10 +135,27 @@ int main(int argc, char** argv) {
     } else if (a == "--save-interval" && i + 1 < argc) {
       saveInterval = std::stoi(argv[++i]);      // 每 N 帧存一张
       if (saveInterval < 1) saveInterval = 1;   // 至少每帧
+    } else if (a == "--log-level" && i + 1 < argc) {
+      const std::string lv = argv[++i];
+      if (lv == "debug") {
+        DMSAlgo::Logger::instance().setLevel(DMSAlgo::LogLevel::Debug);
+      } else if (lv == "info") {
+        DMSAlgo::Logger::instance().setLevel(DMSAlgo::LogLevel::Info);
+      } else if (lv == "warn") {
+        DMSAlgo::Logger::instance().setLevel(DMSAlgo::LogLevel::Warn);
+      } else if (lv == "error") {
+        DMSAlgo::Logger::instance().setLevel(DMSAlgo::LogLevel::Error);
+      } else {
+        LOG_ERROR("main") << "unknown --log-level '" << lv << "' (use debug|info|warn|error)";
+        return 1;
+      }
+    } else if (a == "--log-file" && i + 1 < argc) {
+      DMSAlgo::Logger::instance().setLogFile(argv[++i]);
     } else if (a == "--help" || a == "-h") {
       std::cout << "usage: fatigue_server [--port 9000] [--backend mock|onnx|tensorrt] "
                    "[--device cpu|cuda] [--model-dir models] [--no-view] "
-                   "[--save-dir frames] [--save-interval 5]\n";
+                   "[--save-dir frames] [--save-interval 5] "
+                   "[--log-level debug|info|warn|error] [--log-file <path>]\n";
       return 0;
     }
   }
@@ -139,34 +163,31 @@ int main(int argc, char** argv) {
   std::signal(SIGINT, onSignal);           //Ctrl + C 触发回调
   std::signal(SIGTERM, onSignal);          //kill <进程PID> 触发回调
 
-  // 关闭 stdout/stderr 缓冲，保证日志实时可见（尤其重定向到文件/管道时）
-  std::cout << std::unitbuf;
-  std::cerr << std::unitbuf;
-
   // ---- 3. 初始化网络 + 推理管线 ----
   asio::io_context io;
-  fatigue::UdpServer server(io, port);         // 构造时即 open + bind UDP socket
+  DMSAlgo::UdpServer server(io, port);         // 构造时即 open + bind UDP socket
   if (!server.bound()) {
-    std::cerr << "[main] failed to bind UDP port " << port << "\n";
+    LOG_ERROR("main") << "failed to bind UDP port " << port;
     return 1;                                  // 端口被占用等绑定失败，直接退出
   }
 
   // 工厂按 --backend 选择后端；onnx 加载失败会自动回退到 mock
-  auto pipeline = fatigue::makePipeline(opts);
-  std::cout << "[main] backend=" << pipeline->backendName()
-            << " listening on UDP " << port << "\n";
+  auto pipeline = DMSAlgo::makePipeline(opts);
+  LOG_INFO("main") << "backend=" << pipeline->backendName()
+                   << " listening on UDP " << port;
 
   // ---- 3.5 抽帧保存：--save-dir 指定目录时启用 ----
   // 每 saveInterval 帧存一张（保证画面多样）；文件名是 0..199 环形槽位，
   // 存满 kMaxSavedFrames 张后回到 0 号覆盖，始终保留最近 kMaxSavedFrames 张。
   std::atomic<int> receivedCount{0};   // 收到的总帧数（0 起）
   std::atomic<int> savedCount{0};      // 已保存帧数（用于环形槽位计算）
+  std::atomic<int64_t> lastFrameMs{steadyNowMs()};  // 最近一帧到达时间（无帧心跳用）
   if (!saveDir.empty()) {
     std::error_code ec;
     saveDir = std::filesystem::absolute(saveDir, ec).string();   // 转绝对路径，日志与落盘位置一致清晰
     std::filesystem::create_directories(saveDir, ec);
-    std::cout << "[save] saving every " << saveInterval << " frames to '" << saveDir
-              << "' (ring of " << kMaxSavedFrames << ")\n";
+    LOG_INFO("save") << "saving every " << saveInterval << " frames to '" << saveDir
+                     << "' (ring of " << kMaxSavedFrames << ")";
   }
 
   // ---- 4. 手动控制：视频窗口（按平台）+ 控制台按键 ----
@@ -188,16 +209,15 @@ int main(int argc, char** argv) {
       default: return;                                            // 其它键忽略
     }
     if (manual.load()) {
-      std::cout << "[manual] result -> " << manualState << "\n";
+      LOG_INFO("manual") << "result -> " << manualState;
     } else {
-      std::cout << "[manual] back to automatic (" << pipeline->backendName()
-                << ")\n";
+      LOG_INFO("manual") << "back to automatic (" << pipeline->backendName() << ")";
     }
   };
 
 #ifdef _WIN32
   // ---- Windows：Win32 GDI 视频窗口 + 控制台按键 ----
-  fatigue::VideoViewer viewer;
+  DMSAlgo::VideoViewer viewer;
 
   // 通道 1：视频窗口按键（点一下窗口后按 1/2/3/0/M）
   if (!noView) {
@@ -205,9 +225,9 @@ int main(int argc, char** argv) {
         "FatigueGuard live view (keys: 1=awake 2=distracted 3=drowsy 0=none M=auto)",
         640, 480, [&](int vk) { applyManualKey(vk); });
     if (ok) {
-      std::cout << "[view] live window opened\n";
+      LOG_INFO("view") << "live window opened";
     } else {
-      std::cerr << "[view] could not open live window (continuing headless)\n";
+      LOG_WARN("view") << "could not open live window (continuing headless)";
     }
   }
   const bool viewing = !noView && viewer.started();
@@ -222,18 +242,18 @@ int main(int argc, char** argv) {
         applyManualKey(ch);
       }
     }).detach();                               // 分离线程：随进程结束回收
-    std::cout << "[manual] console keys: 1=awake 2=distracted 3=drowsy 0=none M=auto\n";
+    LOG_INFO("manual") << "console keys: 1=awake 2=distracted 3=drowsy 0=none M=auto";
   }
 #else
   // ---- Linux：OpenCV 实时预览（若编译时检测到 OpenCV）+ 终端按键 ----
 #ifdef FATIGUE_ENABLE_VIEWER
-  fatigue::OpenCvViewer viewer;
+  DMSAlgo::OpenCvViewer viewer;
   const bool viewing = !noView && viewer.start(
       "FatigueGuard live view (keys: 1=awake 2=distracted 3=drowsy 0=none M=auto)");
   if (viewing) {
-    std::cout << "[view] live window enabled (OpenCV)\n";
+    LOG_INFO("view") << "live window enabled (OpenCV)";
   } else if (!noView) {
-    std::cerr << "[view] could not enable live window (continuing headless)\n";
+    LOG_WARN("view") << "could not enable live window (continuing headless)";
   }
 #else
   const bool viewing = false;
@@ -248,7 +268,7 @@ int main(int argc, char** argv) {
         std::this_thread::sleep_for(std::chrono::milliseconds(30));
       }
     }).detach();
-    std::cout << "[manual] console keys: 1=awake 2=distracted 3=drowsy 0=none M=auto\n";
+    LOG_INFO("manual") << "console keys: 1=awake 2=distracted 3=drowsy 0=none M=auto";
   }
 #endif
 
@@ -256,6 +276,8 @@ int main(int argc, char** argv) {
   // 注意：该回调运行在 UdpServer 的接收线程上，不是主线程。
   server.start([&](const std::vector<uint8_t>& jpeg,
                    const asio::ip::udp::endpoint& from) {
+    lastFrameMs.store(steadyNowMs());   // 记录收帧时间，供无帧心跳判断
+
     // 抽帧保存（可选）：每 saveInterval 帧存一张；文件名按 0..199 环形覆盖。
     if (!saveDir.empty()) {
       const int seq = receivedCount.fetch_add(1);
@@ -276,11 +298,11 @@ int main(int argc, char** argv) {
     if (viewing) {
       int w = 0, h = 0;
       std::vector<uint8_t> bgra;
-      if (fatigue::decodeJpegToBgra(jpeg.data(), jpeg.size(), w, h, bgra)) {
+      if (DMSAlgo::decodeJpegToBgra(jpeg.data(), jpeg.size(), w, h, bgra)) {
         viewer.showFrame(bgra.data(), w, h);
         static bool logged = false;            // 只打印一次首帧尺寸
         if (!logged) {
-          std::cout << "[view] first frame decoded: " << w << "x" << h << "\n";
+          LOG_INFO("view") << "first frame decoded: " << w << "x" << h;
           logged = true;
         }
       }
@@ -300,7 +322,7 @@ int main(int argc, char** argv) {
     }
 
     // ④ 打包 JSON 回传手机
-    fatigue::json j;
+    DMSAlgo::json j;
     j["state"] = r.state;
     j["ear"] = r.features.ear;
     j["mar"] = r.features.mar;
@@ -309,14 +331,14 @@ int main(int argc, char** argv) {
     j["fps"] = r.fps;
     j["box"] = std::vector<float>{r.features.bx, r.features.by, r.features.bw, r.features.bh};
 
-    server.sendTo(from, fatigue::packMessage(fatigue::MsgType::ServerState,
+    server.sendTo(from, DMSAlgo::packMessage(DMSAlgo::MsgType::ServerState,
                                              r.frameId, j.dump()));
 
     // ⑤ 每 30 帧打一次状态日志，避免刷屏
     static size_t logTick = 0;
     if (++logTick % 30 == 0) {
-      std::cout << "[main] state=" << r.state << " ear=" << r.features.ear
-                << " yaw=" << r.features.yaw << " fps=" << r.fps << "\n";
+      LOG_INFO("main") << "state=" << r.state << " ear=" << r.features.ear
+                       << " yaw=" << r.features.yaw << " fps=" << r.fps;
     }
   });
 
@@ -328,12 +350,20 @@ int main(int argc, char** argv) {
   // 保证最迟 100ms 内响应退出信号（onSignal 里的 notify 仍保留，用于 Windows
   // 及其它信号投递到别的线程时的即时唤醒）。
   std::unique_lock<std::mutex> lk(g_cvMtx);
+  int64_t lastHeartbeatMs = steadyNowMs();
   while (g_running.load()) {
     g_cv.wait_for(lk, std::chrono::milliseconds(100));
 #if !defined(_WIN32) && defined(FATIGUE_ENABLE_VIEWER)
     // 顺便刷新预览窗口（imshow + waitKey 必须在同一 GUI 线程上）
     if (viewing) viewer.pump();
 #endif
+    // 无帧心跳：超过 5 秒没收到帧就告警，便于区分「手机断流」还是「服务端卡死」。
+    const int64_t nowMs = steadyNowMs();
+    const int64_t gap = nowMs - lastFrameMs.load();
+    if (gap > 5000 && nowMs - lastHeartbeatMs > 5000) {
+      LOG_WARN("main") << "no frames for " << (gap / 1000) << "s";
+      lastHeartbeatMs = nowMs;
+    }
   }
 
   // ---- 7. 清理：停接收线程、关视频窗口、恢复终端 ----
@@ -346,6 +376,6 @@ int main(int argc, char** argv) {
 #if !defined(_WIN32)
   restoreStdin();
 #endif
-  std::cout << "[main] shutting down\n";
+  LOG_INFO("main") << "shutting down";
   return 0;
 }

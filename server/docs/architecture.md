@@ -145,7 +145,7 @@ enum class MsgType : uint8_t {
 
 ## 6. 检测算法原理
 
-检测是**两段模型 + 纯几何后处理**，全在 [ModelPipeline.cpp](../src/pipeline/ModelPipeline.cpp)：
+检测是**两段模型 + 纯几何后处理**，全在 [ModelPipeline.cpp](../src/pipeline/model/ModelPipeline.cpp)：
 
 ```
 JPEG → 人脸检测(YOLOv8n-face) → 人脸框 → 关键点(PFLD, 68点) → 几何特征 → 时序状态机
@@ -168,7 +168,7 @@ JPEG → 人脸检测(YOLOv8n-face) → 人脸框 → 关键点(PFLD, 68点) →
 
 ### 6.3 疲劳 —— EAR（眼睛纵横比）
 
-闭眼时上下眼睑距离会显著变小。每只眼取 6 个关键点（左眼 36–41，右眼 42–47），公式在 [Features.h](../src/pipeline/Features.h)：
+闭眼时上下眼睑距离会显著变小。每只眼取 6 个关键点（左眼 36–41，右眼 42–47），公式在 [Features.h](../src/pipeline/base/Features.h)：
 
 ```
 EAR = ( |P1-P5| + |P2-P4| ) / ( 2 × |P0-P3| )
@@ -203,7 +203,7 @@ roll  = atan2(R[1][0], R[0][0])                    // 歪头
 
 > ⚠️ 3D 模型已按 OpenCV 约定标定（Y 向下、Z 朝相机），正脸 `pitch≈0`。`|yaw|>25°` 或 `|pitch|>20°` 判「分心」。此前模型朝向相反导致正脸 `pitch≈±180°` 恒误报分心，已修复（见 [linux-build-and-run.md](linux-build-and-run.md) 问题 9）。
 
-### 6.6 时序状态机（[StateDecider.cpp](../src/pipeline/StateDecider.cpp)）
+### 6.6 时序状态机（[StateDecider.cpp](../src/pipeline/base/StateDecider.cpp)）
 
 单帧几何特征有噪声，用**滑动窗口 + 迟滞**的时序滤波：
 
@@ -222,7 +222,7 @@ roll  = atan2(R[1][0], R[0][0])                    // 歪头
 
 - **疲劳优先于分心**：既闭眼又转头时报 `drowsy`。
 - **不是单帧触发**：要「约 2 秒里 60% 时间闭眼」才报疲劳，偶尔眨眼不误报、长时间闭眼才报。
-- 所有阈值集中在 [StateDecider.h](../src/pipeline/StateDecider.h) 的 `StateConfig`，方便统一调参。
+- 所有阈值集中在 [StateDecider.h](../src/pipeline/base/StateDecider.h) 的 `StateConfig`，方便统一调参。
 
 ---
 
@@ -270,7 +270,7 @@ cd build/linux-tensorrt
 | `--save-interval` | 5 | 每 N 帧存一张 |
 | `--no-view` | off | 关闭视频预览窗口 |
 
-### 8.2 状态判定阈值（[StateDecider.h](../src/pipeline/StateDecider.h)）
+### 8.2 状态判定阈值（[StateDecider.h](../src/pipeline/base/StateDecider.h)）
 
 ```cpp
 earThreshold   = 0.20f;  // 低于它算「闭眼」

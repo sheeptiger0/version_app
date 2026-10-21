@@ -12,7 +12,7 @@
 #include "net/FrameReassembler.h"
 #include "net/Protocol.h"
 
-using namespace fatigue;
+using namespace DMSAlgo;
 
 static int g_failures = 0;
 

@@ -6,7 +6,7 @@
 #include <cmath>
 #include <vector>
 
-namespace fatigue {
+namespace DMSAlgo {
 
 struct Point2f {
   float x = 0.0f;
@@ -57,4 +57,4 @@ inline float mar(const std::vector<Point2f>& lm) {
   return h > 1e-6f ? v / h : 0.0f;
 }
 
-} // namespace fatigue
+} // namespace DMSAlgo

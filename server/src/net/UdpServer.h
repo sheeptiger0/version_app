@@ -12,7 +12,7 @@
 #include "net/FrameReassembler.h"
 #include "net/Protocol.h"
 
-namespace fatigue {
+namespace DMSAlgo {
 
 // Binds a UDP socket and runs a blocking receive loop on its own thread.
 class UdpServer {
@@ -50,4 +50,4 @@ class UdpServer {
   asio::ip::udp::endpoint lastClient_;
 };
 
-} // namespace fatigue
+} // namespace DMSAlgo

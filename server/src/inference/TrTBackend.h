@@ -12,7 +12,7 @@
 
 #include "inference/IInferenceBackend.h"
 
-namespace fatigue {
+namespace DMSAlgo {
 
 class TrTBackend : public IInferenceBackend {
  public:
@@ -32,4 +32,4 @@ class TrTBackend : public IInferenceBackend {
   std::unique_ptr<Impl> impl_;
 };
 
-} // namespace fatigue
+} // namespace DMSAlgo

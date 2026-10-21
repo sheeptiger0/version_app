@@ -11,7 +11,7 @@
 
 #include <opencv2/core.hpp>   // cv::Mat
 
-namespace fatigue {
+namespace DMSAlgo {
 
 class OpenCvViewer {
  public:
@@ -35,4 +35,4 @@ class OpenCvViewer {
   cv::Mat latest_;
 };
 
-} // namespace fatigue
+} // namespace DMSAlgo
