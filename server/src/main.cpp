@@ -135,27 +135,10 @@ int main(int argc, char** argv) {
     } else if (a == "--save-interval" && i + 1 < argc) {
       saveInterval = std::stoi(argv[++i]);      // 每 N 帧存一张
       if (saveInterval < 1) saveInterval = 1;   // 至少每帧
-    } else if (a == "--log-level" && i + 1 < argc) {
-      const std::string lv = argv[++i];
-      if (lv == "debug") {
-        DMSAlgo::Logger::instance().setLevel(DMSAlgo::LogLevel::Debug);
-      } else if (lv == "info") {
-        DMSAlgo::Logger::instance().setLevel(DMSAlgo::LogLevel::Info);
-      } else if (lv == "warn") {
-        DMSAlgo::Logger::instance().setLevel(DMSAlgo::LogLevel::Warn);
-      } else if (lv == "error") {
-        DMSAlgo::Logger::instance().setLevel(DMSAlgo::LogLevel::Error);
-      } else {
-        LOG_ERROR("main") << "unknown --log-level '" << lv << "' (use debug|info|warn|error)";
-        return 1;
-      }
-    } else if (a == "--log-file" && i + 1 < argc) {
-      DMSAlgo::Logger::instance().setLogFile(argv[++i]);
     } else if (a == "--help" || a == "-h") {
       std::cout << "usage: fatigue_server [--port 9000] [--backend mock|onnx|tensorrt] "
                    "[--device cpu|cuda] [--model-dir models] [--no-view] "
-                   "[--save-dir frames] [--save-interval 5] "
-                   "[--log-level debug|info|warn|error] [--log-file <path>]\n";
+                   "[--save-dir frames] [--save-interval 5]\n";
       return 0;
     }
   }

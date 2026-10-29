@@ -12,6 +12,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(FATIGUE_ENABLE_ONNX "Build ONNX Runtime + OpenCV inference backend" OFF)
 option(FATIGUE_ENABLE_TENSORRT "Build native TensorRT + OpenCV inference backend" OFF)
 
+# 编译期日志配置：级别与落盘路径在编译时钉死，运行时不再传参。
+#   -DFATIGUE_LOG_LEVEL=0|1|2|3   debug/info/warn/error，默认 info(1)
+#   -DFATIGUE_LOG_FILE=/tmp/x.log  空 = 只写控制台
+set(FATIGUE_LOG_LEVEL 1 CACHE STRING "Compile-time log level: 0=debug 1=info 2=warn 3=error")
+set(FATIGUE_LOG_FILE "" CACHE STRING "Compile-time log file path (empty = console only)")
+
 # 自定义 find 模块目录（FindTensorRT.cmake）
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -57,6 +63,8 @@ target_compile_definitions(fatigue_core PUBLIC
   ASIO_STANDALONE
   ASIO_NO_DEPRECATED
   ASIO_SEPARATE_COMPILATION
+  FATIGUE_LOG_LEVEL=${FATIGUE_LOG_LEVEL}
+  "FATIGUE_LOG_FILE=\"${FATIGUE_LOG_FILE}\""
 )
 
 target_link_libraries(fatigue_core PUBLIC Threads::Threads)

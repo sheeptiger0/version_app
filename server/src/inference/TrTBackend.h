@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "inference/IInferenceBackend.h"
+#include "../inference/IInferenceBackend.h"
 
 namespace DMSAlgo {
 

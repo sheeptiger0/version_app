@@ -17,6 +17,16 @@ namespace DMSAlgo {
 
 enum class LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3 };
 
+// 编译期日志配置：级别与落盘路径在编译时钉死，运行时不再传参。
+//   FATIGUE_LOG_LEVEL : 0=Debug 1=Info 2=Warn 3=Error，默认 1（Info）
+//   FATIGUE_LOG_FILE  : 日志文件路径，默认空 = 只写控制台
+#ifndef FATIGUE_LOG_LEVEL
+#define FATIGUE_LOG_LEVEL 1
+#endif
+#ifndef FATIGUE_LOG_FILE
+#define FATIGUE_LOG_FILE ""
+#endif
+
 // 极简 header-only 日志器：分级 + 时间戳 + tag + 可选颜色 + 可选落盘 + 线程安全。
 // 只依赖标准库，mock 构建保持「cmake + g++」零外部依赖。
 class Logger {
@@ -24,25 +34,6 @@ class Logger {
   static Logger& instance() {
     static Logger logger;
     return logger;
-  }
-
-  void setLevel(LogLevel level) { level_ = level; }
-
-  // 空路径 = 只写控制台；非空 = 追加写文件（文件不带颜色）。
-  void setLogFile(const std::string& path) {
-    std::lock_guard<std::mutex> lk(mtx_);
-    if (file_) {
-      std::fclose(file_);
-      file_ = nullptr;
-    }
-    filePath_.clear();
-    if (path.empty()) return;
-    file_ = std::fopen(path.c_str(), "a");
-    if (!file_) {
-      std::fprintf(stderr, "[log] cannot open log file '%s'\n", path.c_str());
-      return;
-    }
-    filePath_ = path;
   }
 
   void write(LogLevel level, const std::string& tag, const std::string& msg) {
@@ -69,7 +60,27 @@ class Logger {
   }
 
  private:
-  Logger() = default;
+  // 把编译期整数级别映射成枚举（非法值回退 Info）。
+  static LogLevel compileLevel() {
+    switch (FATIGUE_LOG_LEVEL) {
+      case 0:  return LogLevel::Debug;
+      case 2:  return LogLevel::Warn;
+      case 3:  return LogLevel::Error;
+      case 1:
+      default: return LogLevel::Info;
+    }
+  }
+
+  // 构造时按编译期配置钉死级别与落盘路径（单例，首次 instance() 时执行一次）。
+  Logger() {
+    level_ = compileLevel();
+    if (FATIGUE_LOG_FILE[0] != '\0') {
+      file_ = std::fopen(FATIGUE_LOG_FILE, "a");
+      if (!file_) {
+        std::fprintf(stderr, "[log] cannot open log file '%s'\n", FATIGUE_LOG_FILE);
+      }
+    }
+  }
   Logger(const Logger&) = delete;
   Logger& operator=(const Logger&) = delete;
 
@@ -121,8 +132,7 @@ class Logger {
     return out;
   }
 
-  LogLevel level_ = LogLevel::Info;
-  std::string filePath_;
+  LogLevel level_ = LogLevel::Info;  // 构造器里按 FATIGUE_LOG_LEVEL 覆盖
   std::FILE* file_ = nullptr;
   std::mutex mtx_;
 };
